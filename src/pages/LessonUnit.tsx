@@ -153,17 +153,6 @@ const LessonUnit = () => {
                     {lesson.description}
                   </p>
                   
-                  {/* Special indicators for video/audio lessons */}
-                  {lesson.type === 'video' && (
-                    <div className="mb-3 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                      📹 Video URL: {lesson.videoUrl}
-                    </div>
-                  )}
-                  {lesson.type === 'audio' && (
-                    <div className="mb-3 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                      🎵 Audio URL: {lesson.videoUrl}
-                    </div>
-                  )}
                   
                   <Link
                     to={`/exercise/${lessonId}`}

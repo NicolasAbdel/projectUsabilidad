@@ -19,7 +19,7 @@ const Footer = () => {
           </div>
           
           <div className="flex items-center gap-1 text-sm text-gray-500">
-            <span>Made with</span>
+            <span>Made for Group 2</span>
             <Heart size={14} className="text-red-500 fill-red-500" />
             <span>for learning</span>
           </div>

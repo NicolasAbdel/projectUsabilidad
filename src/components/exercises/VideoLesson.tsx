@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'; // Agregamos useCallback
+import React, { useState, useRef, useEffect, useCallback } from 'react'; // We add useCallback
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
 type VideoLessonProps = {
   title: string;
   description: string;
-  videoUrl: string; // Se espera la URL de incrustación completa de YouTube (ej. https://www.youtube.com/TULINK`:9)
+  videoUrl: string; // Expects the full YouTube embed URL (e.g., https://www.youtube.com/TULINK`:9)
   isAudioOnly?: boolean;
   onComplete: () => void;
 };
@@ -19,11 +19,11 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [hasWatched, setHasWatched] = useState(false);
-  const videoRef = useRef<HTMLIFrameElement>(null); // Referencia al iframe del video
-  const playerReady = useRef(false); // Para saber si el reproductor de YouTube está listo
+  const videoRef = useRef<HTMLIFrameElement>(null); // Reference to the video iframe
+  const playerReady = useRef(false); // To know if the YouTube player is ready
 
-  // Función para enviar comandos al iframe de YouTube
-  // Se usa `useCallback` para evitar que la función se recree innecesariamente
+  // Function to send commands to the YouTube iframe
+  // `useCallback` is used to prevent the function from being recreated unnecessarily
   const postMessageToPlayer = useCallback((action: string, value?: any) => {
     if (videoRef.current && videoRef.current.contentWindow) {
       try {
@@ -35,55 +35,55 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
           }),
           '*'
         );
-        console.log(`Comando enviado al reproductor: ${action}`);
+        console.log(`Command sent to player: ${action}`);
       } catch (error) {
-        console.warn('Error al enviar mensaje al reproductor:', error);
+        console.warn('Error sending message to player:', error);
       }
     } else {
-      console.warn('Reproductor de YouTube no está listo o iframe no encontrado para enviar mensaje:', action);
+      console.warn('YouTube player is not ready or iframe not found to send message:', action);
     }
   }, []);
 
-  // Maneja el evento de play/pause
+  // Handles the play/pause event
   const handlePlayPause = useCallback(() => {
     if (isPlaying) {
       postMessageToPlayer('pauseVideo');
     } else {
-      // Dar tiempo al iframe para cargar antes de intentar reproducir
+      // Give the iframe time to load before trying to play
       setTimeout(() => {
         postMessageToPlayer('playVideo');
       }, 1000);
-      // Marcar como visto al iniciar la reproducción (incluso si es solo por clic en la UI)
+      // Mark as watched when playback starts (even if it's just from a UI click)
       if (!hasWatched) {
         setHasWatched(true);
       }
     }
-    // Actualizamos el estado local inmediatamente para retroalimentación visual,
-    // pero el estado real se sincronizará con los mensajes del iframe.
+    // We update the local state immediately for visual feedback,
+    // but the actual state will be synchronized with messages from the iframe.
     setIsPlaying(!isPlaying); 
   }, [isPlaying, hasWatched, postMessageToPlayer]);
 
-  // Maneja el evento de silenciar/desactivar silencio
+  // Handles the mute/unmute event
   const handleMuteToggle = useCallback(() => {
     if (isMuted) {
       postMessageToPlayer('unMute');
     } else {
       postMessageToPlayer('mute');
     }
-    setIsMuted(!isMuted); // Actualiza el estado local
+    setIsMuted(!isMuted); // Updates the local state
   }, [isMuted, postMessageToPlayer]);
 
-  // Esta función se llama cuando el video realmente termina según la API de YouTube
+  // This function is called when the video actually ends according to the YouTube API
   const handleVideoEnd = useCallback(() => {
     setIsPlaying(false);
     setHasWatched(true);
-    console.log('Video terminado según la API de YouTube.');
+    console.log('Video finished according to the YouTube API.');
   }, []);
 
-  // Escucha los mensajes del iframe de YouTube (API de IFrame Player)
+  // Listens for messages from the YouTube iframe (IFrame Player API)
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
-      // Verifica el origen para seguridad: debe ser de YouTube
+      // Verifies the origin for security: must be from YouTube
       if (!event.origin.includes('youtube.com') && !event.origin.includes('youtu.be')) {
         return;
       }
@@ -92,33 +92,33 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
       try {
         data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
       } catch (e) {
-        return; // No es un JSON válido
+        return; // Not a valid JSON
       }
 
-      // Detecta que el reproductor está listo
+      // Detects that the player is ready
       if (data && data.event === 'onReady') {
         playerReady.current = true;
-        console.log('Reproductor de YouTube listo!');
-        // Si es una lección de audio, asegúrate de que el audio comience a reproducirse después de estar listo
-        // y de que no esté silenciado si el estado local indica que no debería estarlo.
+        console.log('YouTube player ready!');
+        // If it's an audio lesson, make sure the audio starts playing after it's ready
+        // and that it's not muted if the local state indicates it shouldn't be.
         if (isAudioOnly) {
           setTimeout(() => {
-            postMessageToPlayer('unMute'); // Asegura que no esté silenciado si es solo audio
-            postMessageToPlayer('playVideo'); // Intenta iniciar reproducción
+            postMessageToPlayer('unMute'); // Ensures it's not muted if it's audio only
+            postMessageToPlayer('playVideo'); // Attempts to start playback
           }, 500);
         }
       }
 
-      // Detecta cambios de estado del reproductor
+      // Detects player state changes
       if (data && data.event === 'onStateChange') {
         const playerState = data.info; // 0=ended, 1=playing, 2=paused, 3=buffering, 5=video cued
 
-        if (playerState === 0) { // Video terminado
+        if (playerState === 0) { // Video ended
           handleVideoEnd();
-        } else if (playerState === 1) { // Reproduciendo
+        } else if (playerState === 1) { // Playing
           setIsPlaying(true);
-          setHasWatched(true); // Se marca como visto una vez que empieza a reproducirse
-        } else if (playerState === 2) { // Pausado
+          setHasWatched(true); // Marked as watched once it starts playing
+        } else if (playerState === 2) { // Paused
           setIsPlaying(false);
         }
       }
@@ -129,20 +129,20 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
     return () => {
       window.removeEventListener('message', onMessage);
     };
-  }, [handleVideoEnd, isAudioOnly, postMessageToPlayer]); // Dependencias para el efecto
+  }, [handleVideoEnd, isAudioOnly, postMessageToPlayer]); // Dependencies for the effect
 
 
-  // Construye la URL de incrustación para el iframe
-  // Se añade `enablejsapi=1` para la comunicación con JavaScript
-  // `autoplay=1` intenta iniciar automáticamente (puede ser bloqueado por navegadores)
-  // `mute=${isMuted ? 1 : 0}` intenta silenciar/desilenciar según el estado local (puede que necesite postMessage)
-  // `controls=1` muestra los controles nativos de YouTube.
+  // Builds the embed URL for the iframe
+  // `enablejsapi=1` is added for JavaScript communication
+  // `autoplay=1` attempts to start automatically (can be blocked by browsers)
+  // `mute=${isMuted ? 1 : 0}` attempts to mute/unmute based on local state (may need postMessage)
+  // `controls=1` shows the native YouTube controls.
   const embedBaseSrc = `${videoUrl}?enablejsapi=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1`;
   const embedSrcWithMute = `${embedBaseSrc}&mute=${isMuted ? 1 : 0}`;
 
-  // Extrae el ID del video de la URL de incrustación para el modo audio (para `playlist` y `loop`)
+  // Extracts the video ID from the embed URL for audio mode (for `playlist` and `loop`)
   const extractVideoId = (url: string) => {
-    // Busca el patrón /embed/VIDEO_ID en la URL
+    // Searches for the /embed/VIDEO_ID pattern in the URL
     const embedMatch = url.match(/\/embed\/([^?]+)/);
     if (embedMatch) {
       return embedMatch[1];
@@ -160,20 +160,20 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
       </div>
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-        {/* Contenedor principal del Reproductor de Video/Audio */}
+        {/* Main Video/Audio Player Container */}
         <div className={`relative ${isAudioOnly ? 'bg-gradient-to-br from-purple-600 to-indigo-700' : 'bg-gray-900'} aspect-video flex items-center justify-center`}>
           {isAudioOnly ? (
-            // --- Modo Solo Audio ---
+            // --- Audio Only Mode ---
             <div className="text-center text-white">
               <div className="w-24 h-24 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                 <Volume2 size={48} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Lección de Audio</h3>
-              <p className="text-purple-100 mb-4">Escucha atentamente para practicar la pronunciación</p>
+              <h3 className="text-xl font-semibold mb-2">Audio Lesson</h3>
+              <p className="text-purple-100 mb-4">Listen carefully to practice pronunciation</p>
               
-              {/* Botón de Play/Pause visible para el modo audio */}
+              {/* Play/Pause button visible for audio mode */}
               <button
-                onClick={handlePlayPause} // Usa el manejador que envía el mensaje al iframe
+                onClick={handlePlayPause} // Uses the handler that sends the message to the iframe
                 className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all transform hover:scale-105 mx-auto mb-4"
               >
                 {isPlaying ? (
@@ -184,38 +184,38 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
               </button>
 
               {youtubeEmbedId ? (
-                 // Iframe de YouTube oculto para reproducir solo el audio
-                 <iframe
-                   width="320"
-                   height="240"
-                   // Parámetros específicos para audio: controls=0, showinfo=0, playlist+loop para repetición
-                   src={`${videoUrl}?autoplay=1&mute=0&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&playlist=${youtubeEmbedId}&loop=1`}
-                   frameBorder="0"
-                   allow="autoplay; encrypted-media"
-                   title={`${title} Audio`}
-                   ref={videoRef}
-                   style={{
-                     position: 'absolute',
-                     top: '-9999px',
-                     left: '-9999px',
-                     opacity: 0,
-                     pointerEvents: 'none',
-                     width: '320px',
-                     height: '240px'
-                   }}
-                 ></iframe>
-               ) : (
-                <p className="text-red-300 mt-2">Error: ID de video no encontrado para el audio.</p>
-               )}
+                  // Hidden YouTube iframe to play only the audio
+                  <iframe
+                    width="320"
+                    height="240"
+                    // Specific parameters for audio: controls=0, showinfo=0, playlist+loop for repetition
+                    src={`${videoUrl}?autoplay=1&mute=0&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1&playlist=${youtubeEmbedId}&loop=1`}
+                    frameBorder="0"
+                    allow="autoplay; encrypted-media"
+                    title={`${title} Audio`}
+                    ref={videoRef}
+                    style={{
+                      position: 'absolute',
+                      top: '-9999px',
+                      left: '-9999px',
+                      opacity: 0,
+                      pointerEvents: 'none',
+                      width: '320px',
+                      height: '240px'
+                    }}
+                  ></iframe>
+                ) : (
+                  <p className="text-red-300 mt-2">Error: Video ID not found for audio.</p>
+                )}
             </div>
           ) : (
-            // --- Modo Video ---
-            videoUrl ? ( // Renderiza el iframe si la URL de incrustación existe
+            // --- Video Mode ---
+            videoUrl ? ( // Renders the iframe if the embed URL exists
               <iframe
                 ref={videoRef}
                 width="100%"
                 height="100%"
-                src={embedSrcWithMute} // Usa la URL base con el parámetro de mute
+                src={embedSrcWithMute} // Uses the base URL with the mute parameter
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
@@ -223,21 +223,21 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
                 className="absolute inset-0 w-full h-full"
               ></iframe>
             ) : (
-              // Placeholder si no hay una URL de video definida
+              // Placeholder if no video URL is defined
               <div className="text-center text-white">
                 <div className="w-24 h-24 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                   <Play size={48} />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Lección de Video</h3>
-                <p className="text-gray-300">Mira y aprende de ejemplos reales</p>
-                <p className="text-red-300 mt-2">Error: URL de video no definida o inválida.</p>
+                <h3 className="text-xl font-semibold mb-2">Video Lesson</h3>
+                <p className="text-gray-300">Watch and learn from real examples</p>
+                <p className="text-red-300 mt-2">Error: Video URL not defined or invalid.</p>
               </div>
             )
           )}
 
-          {/* Overlay de Play/Pause para el modo Video (si quieres controlarlo desde tu UI).
-              Se muestra solo si no es audio, no está reproduciendo y hay una URL válida.
-              Sirve como un "botón de inicio" visible para el usuario si el autoplay es bloqueado. */}
+          {/* Play/Pause overlay for Video mode (if you want to control it from your UI).
+              Shown only if it's not audio, not playing, and there is a valid URL.
+              Serves as a visible "start button" for the user if autoplay is blocked. */}
           {!isAudioOnly && !isPlaying && videoUrl && (
              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
                <button
@@ -249,8 +249,8 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
              </div>
            )}
 
-          {/* Controles de Mute/Unmute para ambos modos (video/audio).
-              Estos botones ahora intentan controlar el iframe de YouTube. */}
+          {/* Mute/Unmute controls for both modes (video/audio).
+              These buttons now attempt to control the YouTube iframe. */}
           <div className="absolute bottom-4 right-4 flex gap-2">
             <button
               onClick={handleMuteToggle}
@@ -260,7 +260,7 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
             </button>
           </div>
 
-          {/* Indicador de progreso simulado: Animación basada en el estado `isPlaying` local. */}
+          {/* Simulated progress indicator: Animation based on the local `isPlaying` state. */}
           {isPlaying && (
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-white bg-opacity-30">
               <div className="h-full bg-purple-500 animate-pulse" style={{ width: '30%' }}></div>
@@ -268,42 +268,42 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
           )}
         </div>
 
-        {/* Información y Consejos de la Lección (sin cambios) */}
+        {/* Lesson Information and Tips */}
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h4 className="font-semibold text-lg">
-                {isAudioOnly ? 'Práctica de Audio' : 'Lección en Video'}
+                {isAudioOnly ? 'Audio Practice' : 'Video Lesson'}
               </h4>
               <p className="text-sm text-gray-500">
-                {isAudioOnly ? 'Concéntrate en la escucha y pronunciación' : 'Mira atentamente y toma notas'}
+                {isAudioOnly ? 'Focus on listening and pronunciation' : 'Watch carefully and take notes'}
               </p>
             </div>
             <div className="flex items-center gap-2">
               {hasWatched && (
                 <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                  ✓ Visto
+                  ✓ Watched
                 </span>
               )}
             </div>
           </div>
 
           <div className="bg-gray-50 rounded-lg p-4 mb-4">
-            <h5 className="font-medium mb-2">Consejos de Aprendizaje:</h5>
+            <h5 className="font-medium mb-2">Learning Tips:</h5>
             <ul className="text-sm text-gray-600 space-y-1">
               {isAudioOnly ? (
                 <>
-                  <li>• Escucha atentamente la pronunciación</li>
-                  <li>• Repite las palabras y frases que escuches</li>
-                  <li>• Presta atención al acento y la entonación</li>
-                  <li>• Practica hablando junto con el audio</li>
+                  <li>• Listen carefully to the pronunciation</li>
+                  <li>• Repeat the words and phrases you hear</li>
+                  <li>• Pay attention to the accent and intonation</li>
+                  <li>• Practice speaking along with the audio</li>
                 </>
               ) : (
                 <>
-                  <li>• Mira el video al menos una vez completamente</li>
-                  <li>• Presta atención al lenguaje corporal y al contexto</li>
-                  <li>• Toma notas del nuevo vocabulario</li>
-                  <li>• Practica las expresiones que aprendas</li>
+                  <li>• Watch the video at least once completely</li>
+                  <li>• Pay attention to body language and context</li>
+                  <li>• Take notes of new vocabulary</li>
+                  <li>• Practice the expressions you learn</li>
                 </>
               )}
             </ul>
@@ -318,7 +318,7 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
                 : 'bg-gray-200 text-gray-500 cursor-not-allowed'
             }`}
           >
-            {hasWatched ? 'Continuar a las Preguntas' : `${isAudioOnly ? 'Escucha' : 'Mira'} el ${isAudioOnly ? 'audio' : 'video'} primero`}
+            {hasWatched ? 'Continue to Questions' : `${isAudioOnly ? 'Listen to' : 'Watch'} the ${isAudioOnly ? 'audio' : 'video'} first`}
           </button>
         </div>
       </div>

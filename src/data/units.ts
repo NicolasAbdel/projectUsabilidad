@@ -12,13 +12,11 @@ export const units = [
         title: "Video Lesson: Conversation Skills",
         description: "Watch and learn from real conversation examples.",
         type: "video",
-        videoUrl: "https://www.youtube.com/TULINK"
       },
       {
         title: "Audio Practice: Listening Skills",
         description: "Listen and practice pronunciation with audio exercises.",
         type: "audio",
-        videoUrl: "https://www.youtube.com/TULINK"
       }
     ],
     exercises: [
@@ -49,13 +47,13 @@ export const units = [
         title: "Video Lesson: Describing People",
         description: "Watch examples of how to describe physical appearance and personality.",
         type: "video",
-        videoUrl: "https://www.youtube.com/TULINK"
+        
       },
       {
         title: "Audio Practice: Pronunciation",
         description: "Listen and practice pronunciation of descriptive adjectives.",
         type: "audio",
-        videoUrl: "https://www.youtube.com/TULINK"
+        
       }
     ],
     exercises: [
@@ -86,13 +84,11 @@ export const units = [
         title: "Video Lesson: Future Plans",
         description: "Watch examples of how to express future plans and intentions.",
         type: "video",
-        videoUrl: "https://www.youtube.com/TULINK"
       },
       {
         title: "Audio Practice: Future Forms",
         description: "Listen and practice pronunciation of future tenses.",
         type: "audio",
-        videoUrl: "https://www.youtube.com/TULINK"
       }
     ],
     exercises: [

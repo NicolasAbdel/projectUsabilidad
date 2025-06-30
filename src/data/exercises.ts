@@ -1,111 +1,120 @@
 export const exercises = [
   // Unidad 1 Lecciones
   {
-    id: "1-lesson-1",
-    title: "Práctica de Opciones Múltiples",
-    description: "Practica introducciones y saludos a través de preguntas interactivas",
-    type: "multiple-choice",
-    questions: [
+    "id": "1-lesson-1",
+    "title": "Multiple Choice Practice",
+    "description": "Practice introductions and greetings through interactive questions",
+    "type": "multiple-choice",
+    "questions": [
       {
-        type: "multiple-choice",
-        text: "¿Qué frase es más apropiada al conocer a alguien por primera vez en una situación formal?",
-        options: [
-          "¡Qué onda! ¿Qué tal?",
-          "Mucho gusto. Mi nombre es...",
-          "¿Cuál es tu nombre?",
-          "¿Cómo te va?"
+        "type": "multiple-choice",
+        "text": "Which phrase is most appropriate when meeting someone for the first time in a formal situation?",
+        "options": [
+          "What's up! How's it going?",
+          "Pleased to meet you. My name is...",
+          "What is your name?",
+          "How are you doing?"
         ],
-        correctAnswer: "Mucho gusto. Mi nombre es..."
+        "correctAnswer": "Pleased to meet you. My name is..."
       },
       {
-        type: "multiple-choice",
-        text: "¿Qué información NO se suele compartir en una primera presentación?",
-        options: [
-          "Tu nombre",
-          "Tu trabajo u ocupación",
-          "De dónde eres",
-          "Tus opiniones políticas"
+        "type": "multiple-choice",
+        "text": "What information is NOT usually shared in a first introduction?",
+        "options": [
+          "Your name",
+          "Your job or occupation",
+          "Where you are from",
+          "Your political opinions"
         ],
-        correctAnswer: "Tus opiniones políticas"
+        "correctAnswer": "Your political opinions"
       },
       {
-        type: "fill-in-the-blank",
-        text: "En un entorno de negocios, es apropiado decir 'Es un ___ conocerte' al ser presentado a alguien.",
-        correctAnswer: "placer"
+        "type": "fill-in-the-blank",
+        "text": "In a business setting, it is appropriate to say 'It's a ___ to meet you' when being introduced to someone.",
+        "correctAnswer": "pleasure"
       },
       {
-        type: "multiple-choice",
-        text: "¿Cuál es la mejor manera de preguntar el nombre de alguien si no lo entendiste la primera vez?",
-        options: [
-          "¿Cómo te llamabas?",
-          "Disculpa, no entendí tu nombre.",
-          "¿Quién eres?",
-          "Necesitas hablar más alto."
+        "type": "multiple-choice",
+        "text": "What is the best way to ask for someone's name if you didn't catch it the first time?",
+        "options": [
+          "What was your name?",
+          "Sorry, I didn't catch your name.",
+          "Who are you?",
+          "You need to speak up."
         ],
-        correctAnswer: "Disculpa, no entendí tu nombre."
+        "correctAnswer": "Sorry, I didn't catch your name."
       },
       {
-        type: "fill-in-the-blank",
-        text: "Al presentarte en una entrevista, debes mencionar tu ___ y calificaciones.",
-        correctAnswer: "experiencia"
+        "type": "fill-in-the-blank",
+        "text": "When introducing yourself in an interview, you should mention your ___ and qualifications.",
+        "correctAnswer": "experience"
       }
     ]
   },
   {
-    id: "1-lesson-2",
-    title: "Lección en Video: Habilidades de Conversación",
-    description: "Observa y aprende de ejemplos de conversaciones reales",
-    type: "video",
-    // ¡URL DE INCRUSTACIÓN DE YOUTUBE CORREGIDA Y REAL!
-    videoUrl: "https://www.youtube.com/embed/2TxVyxrOp0s?si=fjbAsHJ_cGvtnP4D",
-    questions: [
+    "id": "1-lesson-2",
+    "title": "Video Lesson: Real-Life Small Talk",
+    "description": "Watch a natural conversation and learn key phrases for making small talk about jobs and daily routines.",
+    "type": "video",
+    "videoUrl": "https://www.youtube.com/embed/ry9SYnV3svc?si=kuc8-WBX7I_CO9P1",
+    "questions": [
       {
-        type: "multiple-choice",
-        text: "Según el video, ¿cuál es el aspecto más importante para causar una buena primera impresión?",
-        options: [
-          "Hablar fuerte",
-          "Usar solo lenguaje formal",
-          "Ser genuino y amigable",
-          "Hablar de ti mismo constantemente"
+        "type": "multiple-choice",
+        "text": "In the video, one friend starts a 'small talk' conversation by asking about the other's new job. What is a good way to start a similar conversation?",
+        "options": [
+          "How much money do you make?",
+          "So, how's the new job going?",
+          "Is your boss nice?",
+          "Do you work hard?"
         ],
-        correctAnswer: "Ser genuino y amigable"
+        "correctAnswer": "So, how's the new job going?"
       },
       {
-        type: "multiple-choice",
-        text: "Según el video, ¿cuándo debes usar el nombre de pila de alguien?",
-        options: [
-          "Inmediatamente al conocerlo",
-          "Después de que te den permiso",
-          "Nunca en situaciones formales",
-          "Solo con personas de tu edad"
+        "type": "multiple-choice",
+        "text": "The friends discuss several aspects of the new job. Which of these is a good 'small talk' topic when discussing work?",
+        "options": [
+          "Office gossip",
+          "How to get a promotion",
+          "The work environment and company culture",
+          "Complaining about coworkers"
         ],
-        correctAnswer: "Después de que te den permiso"
+        "correctAnswer": "The work environment and company culture"
+      },
+      {
+        "type": "multiple-choice",
+        "text": "The conversation ends with the friends discussing their work schedules. One is an 'early bird' (a morning person). What does her friend say he is?",
+        "options": [
+          "A hard worker",
+          "A sleepy person",
+          "A night owl",
+          "A late comer"
+        ],
+        "correctAnswer": "A night owl"
       }
     ]
   },
   {
-    id: "1-lesson-3",
-    title: "Práctica de Audio: Habilidades de Escucha",
-    description: "Escucha y practica la pronunciación con ejercicios de audio",
-    type: "audio",
-    // ¡MISMA URL DE INCRUSTACIÓN DE YOUTUBE CORREGIDA PARA USAR COMO AUDIO!
-    videoUrl: "https://www.youtube.com/embed/2TxVyxrOp0s?si=fjbAsHJ_cGvtnP4D",
-    questions: [
+    "id": "1-lesson-3",
+    "title": "Audio Practice: Listening Skills",
+    "description": "Listen to a conversation and practice your understanding of introductions and greetings.",
+    "type": "audio",
+    "videoUrl": "https://www.youtube.com/embed/qAppJTZC0zk?si=94WQEIsXPtMW7Ugn",
+    "questions": [
       {
-        type: "multiple-choice",
-        text: "Escucha la pronunciación. ¿Qué saludo suena más natural?",
-        options: [
-          "HOLA CÓMO ESTÁS",
-          "Hola, ¿cómo estás?",
-          "hola cómo estás",
-          "¿Hola? ¿Cómo? ¿Estás?"
-        ],
-        correctAnswer: "Hola, ¿cómo estás?"
+        "type": "fill-in-the-blank",
+        "text": "Listen to the audio. How does Al introduce his friend? Complete the phrase: 'Juanita, ___ is my friend, Bob.'",
+        "correctAnswer": "this"
       },
       {
-        type: "fill-in-the-blank",
-        text: "Escucha y completa: 'Es un ___ conocerte.'",
-        correctAnswer: "placer"
+        "type": "multiple-choice",
+        "text": "Based on the conversation, what is a polite and common response when you meet someone for the first time?",
+        "options": [
+          "Good to meet you.",
+          "You have a beautiful smile.",
+          "Is my aunt here?",
+          "We don't have that."
+        ],
+        "correctAnswer": "Good to meet you."
       }
     ]
   },
