@@ -7,6 +7,7 @@ import MultipleChoice from '../components/exercises/MultipleChoice';
 import FillInTheBlank from '../components/exercises/FillInTheBlank';
 import DragAndDrop from '../components/exercises/DragAndDrop';
 import VideoLesson from '../components/exercises/VideoLesson';
+import AudioPlayer from '../components/exercises/AudioPlayer';
 
 type AnswerState = 'idle' | 'correct' | 'incorrect';
 
@@ -45,8 +46,8 @@ const Exercise = () => {
 
     setCurrentExercise(exercise);
     
-    // Check if this is a video or audio lesson
-    if (exercise.type === 'video' || exercise.type === 'audio') {
+    // Check if this is a video lesson only
+    if (exercise.type === 'video') {
       setShowVideoLesson(true);
     }
     
@@ -69,8 +70,8 @@ const Exercise = () => {
     setShowVideoLesson(false);
   };
 
-  // Show video lesson first for video/audio types
-  if (showVideoLesson && (currentExercise.type === 'video' || currentExercise.type === 'audio')) {
+  // Show video lesson first for video types only
+  if (showVideoLesson && currentExercise.type === 'video') {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex items-center gap-3">
@@ -84,7 +85,7 @@ const Exercise = () => {
           title={currentExercise.title}
           description={currentExercise.description}
           videoUrl={currentExercise.videoUrl}
-          isAudioOnly={currentExercise.type === 'audio'}
+          isAudioOnly={false}
           onComplete={handleVideoComplete}
         />
       </div>
@@ -95,6 +96,12 @@ const Exercise = () => {
 
   const handleAnswer = (answer: string | string[]) => {
     setSelectedAnswer(answer);
+    // Only auto-check for multiple choice questions
+    if (currentQuestion.type === 'multiple-choice') {
+      setTimeout(() => {
+        checkAnswer();
+      }, 300); // Small delay to show the selection
+    }
   };
 
   const checkAnswer = () => {
@@ -113,6 +120,13 @@ const Exercise = () => {
     } else {
       setAnswerState('incorrect');
       loseLife();
+    }
+    
+    // Only auto-advance for multiple choice questions
+    if (currentQuestion.type === 'multiple-choice') {
+      setTimeout(() => {
+        goToNextQuestion();
+      }, 2000); // 2 seconds to show the result
     }
   };
 
@@ -234,10 +248,29 @@ const Exercise = () => {
         </div>
         
         <div className="p-6">
-          {renderExerciseComponent()}
+          {/* Audio Player for audio exercises */}
+          {currentExercise.type === 'audio' && (
+            <div className="mb-8">
+              <AudioPlayer
+                title={currentExercise.title}
+                description={currentExercise.description}
+                videoUrl={currentExercise.videoUrl}
+              />
+            </div>
+          )}
+
+          {/* Questions Section */}
+          <div className={`${currentExercise.type === 'audio' ? 'border-t border-gray-200 pt-6' : ''}`}>
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {currentExercise.type === 'audio' ? '📝 Answer the questions based on the audio:' : 'Questions'}
+              </h3>
+            </div>
+            {renderExerciseComponent()}
+          </div>
 
           <div className="mt-8">
-            {answerState === 'idle' ? (
+            {answerState === 'idle' && currentQuestion.type === 'fill-in-the-blank' && (
               <button
                 onClick={checkAnswer}
                 disabled={!selectedAnswer || (Array.isArray(selectedAnswer) && selectedAnswer.length === 0)}
@@ -249,7 +282,8 @@ const Exercise = () => {
               >
                 Check Answer
               </button>
-            ) : (
+            )}
+            {answerState !== 'idle' && (
               <div>
                 <div className={`p-4 rounded-lg mb-4 flex items-center gap-3 ${
                   answerState === 'correct' ? 'bg-green-100' : 'bg-red-100'
@@ -285,16 +319,26 @@ const Exercise = () => {
                   )}
                 </div>
                 
-                <button
-                  onClick={goToNextQuestion}
-                  className="w-full py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
-                >
-                  {currentQuestionIndex < currentExercise.questions.length - 1 ? (
-                    <>Next Question <ArrowRight size={18} /></>
-                  ) : (
-                    'Complete Exercise'
-                  )}
-                </button>
+                {currentQuestion.type === 'multiple-choice' ? (
+                  <div className="text-center text-sm text-gray-600">
+                    {currentQuestionIndex < currentExercise.questions.length - 1 ? (
+                      <>Moving to next question in 2 seconds...</>
+                    ) : (
+                      <>Completing exercise in 2 seconds...</>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={goToNextQuestion}
+                    className="w-full py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    {currentQuestionIndex < currentExercise.questions.length - 1 ? (
+                      <>Next Question <ArrowRight size={18} /></>
+                    ) : (
+                      'Complete Exercise'
+                    )}
+                  </button>
+                )}
               </div>
             )}
           </div>

@@ -7,7 +7,7 @@ import { units } from '../data/units';
 const LessonUnit = () => {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
-  const { progress, updateUnitProgress } = useProgress();
+  const { progress } = useProgress();
   const [unit, setUnit] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
