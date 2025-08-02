@@ -22,8 +22,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
     return question.options.filter(option => !selectedAnswers.includes(option));
   });
 
-  // This is a mock implementation since react-beautiful-dnd isn't installed
-  // In a real implementation, we would use the library properly
+
   const handleOptionClick = (option: string) => {
     if (answerState !== 'idle') return;
     

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'; // We add useCallback
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
 type VideoLessonProps = {
@@ -35,12 +35,11 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
           }),
           '*'
         );
-        console.log(`Command sent to player: ${action}`);
       } catch (error) {
-        console.warn('Error sending message to player:', error);
+        // Error handling for player communication
       }
     } else {
-      console.warn('YouTube player is not ready or iframe not found to send message:', action);
+      // YouTube player is not ready or iframe not found
     }
   }, []);
 
@@ -58,8 +57,6 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
         setHasWatched(true);
       }
     }
-    // We update the local state immediately for visual feedback,
-    // but the actual state will be synchronized with messages from the iframe.
     setIsPlaying(!isPlaying); 
   }, [isPlaying, hasWatched, postMessageToPlayer]);
 
@@ -73,11 +70,9 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
     setIsMuted(!isMuted); // Updates the local state
   }, [isMuted, postMessageToPlayer]);
 
-  // This function is called when the video actually ends according to the YouTube API
   const handleVideoEnd = useCallback(() => {
     setIsPlaying(false);
     setHasWatched(true);
-    console.log('Video finished according to the YouTube API.');
   }, []);
 
   // Listens for messages from the YouTube iframe (IFrame Player API)
@@ -98,13 +93,12 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
       // Detects that the player is ready
       if (data && data.event === 'onReady') {
         playerReady.current = true;
-        console.log('YouTube player ready!');
         // If it's an audio lesson, make sure the audio starts playing after it's ready
         // and that it's not muted if the local state indicates it shouldn't be.
         if (isAudioOnly) {
           setTimeout(() => {
-            postMessageToPlayer('unMute'); // Ensures it's not muted if it's audio only
-            postMessageToPlayer('playVideo'); // Attempts to start playback
+            postMessageToPlayer('unMute');
+            postMessageToPlayer('playVideo');
           }, 500);
         }
       }
@@ -133,9 +127,6 @@ const VideoLesson: React.FC<VideoLessonProps> = ({
 
 
   // Builds the embed URL for the iframe
-  // `enablejsapi=1` is added for JavaScript communication
-  // `autoplay=1` attempts to start automatically (can be blocked by browsers)
-  // `mute=${isMuted ? 1 : 0}` attempts to mute/unmute based on local state (may need postMessage)
   // `controls=1` shows the native YouTube controls.
   const embedBaseSrc = `${videoUrl}?enablejsapi=1&autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1`;
   const embedSrcWithMute = `${embedBaseSrc}&mute=${isMuted ? 1 : 0}`;

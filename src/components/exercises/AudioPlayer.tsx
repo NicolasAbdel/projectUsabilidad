@@ -30,7 +30,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
           '*'
         );
       } catch (error) {
-        console.warn('Error sending message to player:', error);
+        // Error handling for player communication
       }
     }
   }, []);
