@@ -35,8 +35,8 @@ const LessonUnit = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8 flex justify-center">
-        <div className="animate-pulse">Loading...</div>
+      <div className="container mx-auto px-4 py-8 flex justify-center" role="status" aria-live="polite">
+        <div className="animate-pulse" aria-label="Cargando contenido de la unidad">Loading...</div>
       </div>
     );
   }
@@ -77,19 +77,30 @@ const LessonUnit = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
-        <Link to="/" className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-          <ArrowLeft size={20} />
+        <Link 
+          to="/" 
+          className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="Volver al inicio"
+        >
+          <ArrowLeft size={20} aria-hidden="true" />
         </Link>
-        <h1 className="text-2xl font-bold">Unit {unitId}: {unit.title}</h1>
+        <h1 className="text-2xl font-bold" tabIndex={0}>Unit {unitId}: {unit.title}</h1>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8" role="region" aria-label="Progreso de la unidad">
         <div className="bg-purple-600 px-6 py-5 text-white">
           <div className="flex justify-between items-center">
-            <h2 className="font-semibold">Your Progress</h2>
-            <span className="text-sm">{Math.round(unitProgress * 100)}% complete</span>
+            <h2 className="font-semibold" tabIndex={0}>Your Progress</h2>
+            <span className="text-sm" aria-live="polite" tabIndex={0}>{Math.round(unitProgress * 100)}% complete</span>
           </div>
-          <div className="w-full bg-purple-700 rounded-full h-2 mt-2">
+          <div 
+            className="w-full bg-purple-700 rounded-full h-2 mt-2" 
+            role="progressbar" 
+            aria-valuenow={Math.round(unitProgress * 100)} 
+            aria-valuemin={0} 
+            aria-valuemax={100}
+            aria-label="Progreso de la unidad"
+          >
             <div
               className="bg-yellow-400 h-2 rounded-full transition-all duration-500"
               style={{ width: `${unitProgress * 100}%` }}
@@ -111,19 +122,27 @@ const LessonUnit = () => {
         </div>
       </div>
 
-      <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">Lessons</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mb-8" role="region" aria-labelledby="lessons-heading">
+        <h2 id="lessons-heading" className="text-xl font-bold mb-4" tabIndex={0}>Lessons</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4" role="list">
           {unit.lessons.map((lesson: any, index: number) => {
             const lessonId = `${unitNumber}-lesson-${index + 1}`;
             const isCompleted = progress.completedLessons.includes(lessonId);
             
             return (
-              <div key={index} className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div 
+                key={index} 
+                className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                role="listitem"
+                aria-label={`Lección ${index + 1}: ${lesson.title} - ${isCompleted ? 'Completada' : 'No completada'}`}
+              >
                 <div className="text-center mb-4">
-                  <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center ${
-                    isCompleted ? 'bg-green-100' : getLessonBgColor(lesson.type)
-                  } mb-3`}>
+                  <div 
+                    className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center ${
+                      isCompleted ? 'bg-green-100' : getLessonBgColor(lesson.type)
+                    } mb-3`}
+                    aria-hidden="true"
+                  >
                     {isCompleted ? (
                       <CheckCircle className="text-green-600" size={28} />
                     ) : (
@@ -163,6 +182,9 @@ const LessonUnit = () => {
                         : lesson.type === 'video' ? 'bg-blue-600 text-white hover:bg-blue-700'
                         : 'bg-green-600 text-white hover:bg-green-700'
                     }`}
+                    role="button"
+                    aria-label={`${isCompleted ? 'Repasar' : 'Comenzar'} lección: ${lesson.title}`}
+                    tabIndex={0}
                   >
                     {isCompleted ? 'Review' : 'Start'}
                   </Link>
@@ -173,64 +195,6 @@ const LessonUnit = () => {
         </div>
       </div>
 
-      <div>
-        <h2 className="text-xl font-bold mb-4">Practice Exercises</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {unit.exercises.map((exercise: any, index: number) => {
-            const exerciseId = `${unitNumber}-exercise-${index + 1}`;
-            const isCompleted = progress.completedExercises.includes(exerciseId);
-            // Exercises are unlocked sequentially
-            const isUnlocked = index === 0 || progress.completedExercises.includes(`${unitNumber}-exercise-${index}`);
-            
-            return (
-              <div 
-                key={index} 
-                className={`bg-white p-4 rounded-lg shadow-sm border ${
-                  isUnlocked ? 'border-gray-100' : 'border-gray-200 bg-gray-50'
-                }`}
-              >
-                <div className="text-center mb-3">
-                  <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center ${
-                    isCompleted ? 'bg-green-100' : isUnlocked ? 'bg-purple-100' : 'bg-gray-200'
-                  }`}>
-                    {isCompleted ? (
-                      <CheckCircle className="text-green-600" size={24} />
-                    ) : isUnlocked ? (
-                      <Play className="text-purple-600" size={24} />
-                    ) : (
-                      <Lock className="text-gray-400" size={24} />
-                    )}
-                  </div>
-                </div>
-                <h3 className="font-semibold text-center mb-1">
-                  {exercise.title}
-                </h3>
-                <p className="text-sm text-gray-600 text-center mb-3">
-                  {isUnlocked ? exercise.description : 'Complete previous exercises to unlock'}
-                </p>
-                <div className="text-center">
-                  {isUnlocked ? (
-                    <Link
-                      to={`/exercise/${exerciseId}`}
-                      className={`inline-block text-sm px-4 py-2 rounded ${
-                        isCompleted 
-                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' 
-                          : 'bg-purple-600 text-white hover:bg-purple-700'
-                      } transition-colors`}
-                    >
-                      {isCompleted ? 'Practice Again' : 'Start Practice'}
-                    </Link>
-                  ) : (
-                    <span className="inline-block text-sm px-4 py-2 bg-gray-200 text-gray-500 rounded cursor-not-allowed">
-                      Locked
-                    </span>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 };
