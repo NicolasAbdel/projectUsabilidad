@@ -43,7 +43,7 @@ const FillInTheBlank: React.FC<FillInTheBlankProps> = ({
   return (
     <div>
       <h3 className="text-xl font-semibold mb-4">Fill in the blank</h3>
-      <div className="text-lg mb-6">
+      <div className="text-lg mb-6" id="fill-blank-instruction">
         {parts[0]}
         <input
           type="text"
@@ -52,6 +52,8 @@ const FillInTheBlank: React.FC<FillInTheBlankProps> = ({
           disabled={answerState !== 'idle'}
           className={`inline-block mx-1 px-2 py-1 border ${inputBorderClass} rounded focus:outline-none focus:ring-2 w-32 text-center`}
           placeholder="Type here"
+          aria-label="Fill in the blank"
+          aria-describedby="fill-blank-instruction"
         />
         {parts[1]}
       </div>

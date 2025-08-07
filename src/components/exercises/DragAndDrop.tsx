@@ -62,9 +62,16 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
             <p className="text-gray-400">Drag words here to form your answer</p>
           ) : (
             selectedAnswers.map((option, index) => (
-              <div
+              <button
                 key={`selected-${index}`}
                 onClick={() => handleOptionClick(option)}
+                onKeyDown={(e) => {
+                  if (answerState === 'idle' && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    handleOptionClick(option);
+                  }
+                }}
+                disabled={answerState !== 'idle'}
                 className={`px-3 py-1 rounded-md cursor-pointer ${
                   answerState === 'idle' 
                     ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
@@ -72,9 +79,10 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
                       ? 'bg-green-100 text-green-700'
                       : 'bg-red-100 text-red-700'
                 }`}
+                aria-label={`Remove ${option} from answer`}
               >
                 {option}
-              </div>
+              </button>
             ))
           )}
         </div>
@@ -87,13 +95,21 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
             <p className="text-gray-400">No more words available</p>
           ) : (
             availableOptions.map((option, index) => (
-              <div
+              <button
                 key={`available-${index}`}
                 onClick={() => handleOptionClick(option)}
+                onKeyDown={(e) => {
+                  if (answerState === 'idle' && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    handleOptionClick(option);
+                  }
+                }}
+                disabled={answerState !== 'idle'}
                 className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md cursor-pointer hover:bg-gray-200"
+                aria-label={`Add ${option} to answer`}
               >
                 {option}
-              </div>
+              </button>
             ))
           )}
         </div>

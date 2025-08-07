@@ -95,7 +95,6 @@ const Exercise = () => {
   const currentQuestion = currentExercise.questions[currentQuestionIndex];
 
   const handleAnswer = (answer: string | string[]) => {
-    console.log('handleAnswer called with:', answer);
     setSelectedAnswer(answer);
     // Only auto-check for multiple choice questions
     if (currentQuestion.type === 'multiple-choice') {
@@ -110,12 +109,6 @@ const Exercise = () => {
     
     const answerToCheck = answer || selectedAnswer;
     
-    // Debug logs
-    console.log('Answer to check:', answerToCheck);
-    console.log('Correct Answer:', currentQuestion.correctAnswer);
-    console.log('Answer Type:', typeof answerToCheck);
-    console.log('Correct Answer Type:', typeof currentQuestion.correctAnswer);
-    
     let isCorrect = false;
     
     if (Array.isArray(currentQuestion.correctAnswer)) {
@@ -128,10 +121,6 @@ const Exercise = () => {
       const normalizedCorrect = String(currentQuestion.correctAnswer).trim().toLowerCase();
       isCorrect = normalizedSelected === normalizedCorrect;
     }
-    
-    console.log('Normalized Selected:', String(answerToCheck).trim().toLowerCase());
-    console.log('Normalized Correct:', String(currentQuestion.correctAnswer).trim().toLowerCase());
-    console.log('Is Correct:', isCorrect);
     
     if (isCorrect) {
       setAnswerState('correct');

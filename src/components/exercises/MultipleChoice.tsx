@@ -53,24 +53,38 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
           }
           
           return (
-            <div 
+            <button
               key={index}
-              className={optionClass}
+              className={`w-full text-left ${optionClass}`}
               onClick={() => answerState === 'idle' && onSelectAnswer(option)}
+              onKeyDown={(e) => {
+                if (answerState === 'idle' && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  onSelectAnswer(option);
+                }
+              }}
+              disabled={answerState !== 'idle'}
+              aria-pressed={isSelected}
+              aria-describedby={answerState !== 'idle' ? `feedback-${index}` : undefined}
             >
               <div className="flex items-center justify-between">
                 <span>{option}</span>
                 {answerState !== 'idle' && (
                   <>
                     {isCorrect ? (
-                      <CheckCircle className="text-green-500\" size={20} />
+                      <CheckCircle className="text-green-500" size={20} />
                     ) : (isSelected && !isCorrect) ? (
                       <XCircle className="text-red-500" size={20} />
                     ) : null}
                   </>
                 )}
               </div>
-            </div>
+              {answerState !== 'idle' && (
+                <div id={`feedback-${index}`} className="sr-only">
+                  {isCorrect ? 'Correct answer' : isSelected && !isCorrect ? 'Incorrect answer' : ''}
+                </div>
+              )}
+            </button>
           );
         })}
       </div>
