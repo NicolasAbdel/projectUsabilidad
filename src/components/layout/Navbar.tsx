@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Heart, BookOpen, Award, ChevronDown } from 'lucide-react';
+import { Menu, X, Heart, BookOpen, Award, ChevronDown, Volume2 } from 'lucide-react';
 import { useProgress } from '../../context/ProgressContext';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
+import SoundSettings from './SoundSettings';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSoundSettingsOpen, setIsSoundSettingsOpen] = useState(false);
   const location = useLocation();
   const { progress } = useProgress();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleSoundSettings = () => {
+    setIsSoundSettingsOpen(!isSoundSettingsOpen);
   };
 
   return (
@@ -38,6 +44,13 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-4">
           <SignedIn>
+            <button
+              onClick={toggleSoundSettings}
+              className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+              title="Configuración de Sonido"
+            >
+              <Volume2 size={20} />
+            </button>
             <Link 
               to="/" 
               className={`px-3 py-2 rounded-lg transition-colors ${
@@ -87,6 +100,16 @@ const Navbar = () => {
         <div className="md:hidden bg-white border-t">
           <div className="container mx-auto px-4 py-3 flex flex-col gap-2">
             <SignedIn>
+              <button
+                onClick={() => {
+                  toggleSoundSettings();
+                  setIsMenuOpen(false);
+                }}
+                className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-purple-50 rounded-lg transition-colors"
+              >
+                <Volume2 size={18} />
+                Configuración de Sonido
+              </button>
               <Link 
                 to="/" 
                 className={`px-4 py-3 rounded-lg ${
@@ -139,6 +162,11 @@ const Navbar = () => {
           </div>
         </div>
       )}
+      
+      <SoundSettings 
+        isOpen={isSoundSettingsOpen} 
+        onClose={() => setIsSoundSettingsOpen(false)} 
+      />
     </header>
   );
 };

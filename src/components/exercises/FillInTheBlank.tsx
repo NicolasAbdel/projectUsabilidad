@@ -1,5 +1,8 @@
 
 
+import { useSound } from '../../hooks/useSound';
+import { useEffect } from 'react';
+
 type FillInTheBlankProps = {
   question: {
     text: string;
@@ -16,6 +19,17 @@ const FillInTheBlank: React.FC<FillInTheBlankProps> = ({
   onAnswerChange,
   answerState
 }) => {
+  const { playSuccess, playError } = useSound();
+
+  // Reproducir sonido cuando cambia el estado de la respuesta
+  useEffect(() => {
+    if (answerState === 'correct') {
+      playSuccess();
+    } else if (answerState === 'incorrect') {
+      playError();
+    }
+  }, [answerState, playSuccess, playError]);
+
   // Split the text by the ___ placeholder
   const parts = question.text.split('___');
   

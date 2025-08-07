@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSound } from '../../hooks/useSound';
 
 type DragAndDropProps = {
   question: {
@@ -17,6 +18,17 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
   onAnswersChange,
   answerState
 }) => {
+  const { playSuccess, playError } = useSound();
+
+  // Reproducir sonido cuando cambia el estado de la respuesta
+  useEffect(() => {
+    if (answerState === 'correct') {
+      playSuccess();
+    } else if (answerState === 'incorrect') {
+      playError();
+    }
+  }, [answerState, playSuccess, playError]);
+
   const [availableOptions, setAvailableOptions] = useState(() => {
     // Filter out options that are already selected
     return question.options.filter(option => !selectedAnswers.includes(option));

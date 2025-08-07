@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { soundGenerator } from '../utils/soundGenerator';
 
 type ProgressType = {
   points: number;
@@ -113,6 +114,9 @@ export const ProgressProvider: React.FC<{ children: ReactNode }> = ({ children }
         if (!unlockedUnits.includes(unitId + 1)) {
           unlockedUnits.push(unitId + 1);
         }
+        
+        // Reproducir sonido de victoria cuando se completa una unidad
+        soundGenerator.playVictorySound();
       }
       
       return {
@@ -170,10 +174,24 @@ export const ProgressProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   const loseLife = () => {
-    setProgress(prev => ({
-      ...prev,
-      lives: Math.max(prev.lives - 1, 0)
-    }));
+    setProgress(prev => {
+      const newLives = Math.max(prev.lives - 1, 0);
+      
+      // Reproducir sonido de error cuando se pierde una vida
+      if (newLives < prev.lives) {
+        soundGenerator.playErrorSound();
+      }
+      
+      // Reproducir sonido de game over si se pierden todas las vidas
+      if (newLives === 0) {
+        soundGenerator.playGameOverSound();
+      }
+      
+      return {
+        ...prev,
+        lives: newLives
+      };
+    });
   };
 
   const resetProgress = () => {

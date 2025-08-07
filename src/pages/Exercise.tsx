@@ -95,23 +95,43 @@ const Exercise = () => {
   const currentQuestion = currentExercise.questions[currentQuestionIndex];
 
   const handleAnswer = (answer: string | string[]) => {
+    console.log('handleAnswer called with:', answer);
     setSelectedAnswer(answer);
     // Only auto-check for multiple choice questions
     if (currentQuestion.type === 'multiple-choice') {
       setTimeout(() => {
-        checkAnswer();
-      }, 300); // Small delay to show the selection
+        checkAnswer(answer);
+      }, 500); // Increased delay to ensure state is updated
     }
   };
 
-  const checkAnswer = () => {
+  const checkAnswer = (answer?: string | string[]) => {
     if (answerState !== 'idle') return;
     
-    const isCorrect = Array.isArray(currentQuestion.correctAnswer)
-      ? Array.isArray(selectedAnswer) && 
-        selectedAnswer.length === currentQuestion.correctAnswer.length && 
-        selectedAnswer.every(item => currentQuestion.correctAnswer.includes(item))
-      : selectedAnswer === currentQuestion.correctAnswer;
+    const answerToCheck = answer || selectedAnswer;
+    
+    // Debug logs
+    console.log('Answer to check:', answerToCheck);
+    console.log('Correct Answer:', currentQuestion.correctAnswer);
+    console.log('Answer Type:', typeof answerToCheck);
+    console.log('Correct Answer Type:', typeof currentQuestion.correctAnswer);
+    
+    let isCorrect = false;
+    
+    if (Array.isArray(currentQuestion.correctAnswer)) {
+      isCorrect = Array.isArray(answerToCheck) && 
+        answerToCheck.length === currentQuestion.correctAnswer.length && 
+        answerToCheck.every(item => currentQuestion.correctAnswer.includes(item));
+    } else {
+      // Normalizar las cadenas para comparación
+      const normalizedSelected = String(answerToCheck).trim().toLowerCase();
+      const normalizedCorrect = String(currentQuestion.correctAnswer).trim().toLowerCase();
+      isCorrect = normalizedSelected === normalizedCorrect;
+    }
+    
+    console.log('Normalized Selected:', String(answerToCheck).trim().toLowerCase());
+    console.log('Normalized Correct:', String(currentQuestion.correctAnswer).trim().toLowerCase());
+    console.log('Is Correct:', isCorrect);
     
     if (isCorrect) {
       setAnswerState('correct');
@@ -272,7 +292,7 @@ const Exercise = () => {
           <div className="mt-8">
             {answerState === 'idle' && currentQuestion.type === 'fill-in-the-blank' && (
               <button
-                onClick={checkAnswer}
+                onClick={() => checkAnswer()}
                 disabled={!selectedAnswer || (Array.isArray(selectedAnswer) && selectedAnswer.length === 0)}
                 className={`w-full py-3 rounded-lg font-medium ${
                   !selectedAnswer || (Array.isArray(selectedAnswer) && selectedAnswer.length === 0)

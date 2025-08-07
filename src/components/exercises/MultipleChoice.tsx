@@ -1,4 +1,6 @@
 import { CheckCircle, XCircle } from 'lucide-react';
+import { useSound } from '../../hooks/useSound';
+import { useEffect } from 'react';
 
 type MultipleChoiceProps = {
   question: {
@@ -17,6 +19,17 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
   onSelectAnswer,
   answerState
 }) => {
+  const { playSuccess, playError } = useSound();
+
+  // Reproducir sonido cuando cambia el estado de la respuesta
+  useEffect(() => {
+    if (answerState === 'correct') {
+      playSuccess();
+    } else if (answerState === 'incorrect') {
+      playError();
+    }
+  }, [answerState, playSuccess, playError]);
+
   return (
     <div>
       <h3 className="text-xl font-semibold mb-4">{question.text}</h3>
