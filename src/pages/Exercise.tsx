@@ -282,12 +282,7 @@ const Exercise = () => {
             {answerState === 'idle' && currentQuestion.type === 'fill-in-the-blank' && (
               <button
                 onClick={() => checkAnswer()}
-                disabled={!selectedAnswer || (Array.isArray(selectedAnswer) && selectedAnswer.length === 0)}
-                className={`w-full py-3 rounded-lg font-medium ${
-                  !selectedAnswer || (Array.isArray(selectedAnswer) && selectedAnswer.length === 0)
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-purple-600 text-white hover:bg-purple-700'
-                } transition-colors`}
+                className="w-full py-3 rounded-lg font-medium bg-purple-600 text-white hover:bg-purple-700 transition-colors"
               >
                 Check Answer
               </button>
